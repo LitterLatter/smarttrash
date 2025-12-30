@@ -1,4 +1,125 @@
-<h2>Welcome to SmartTrash</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SmartTrash IoT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<a href="user-dashboard.html">Public Dashboard</a><br><br>
-<a href="login.html">Admin Login</a>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f4f6f8;
+    }
+
+    header {
+      background: linear-gradient(to right, #00695c, #00897b);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 36px;
+    }
+
+    header p {
+      margin-top: 10px;
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h2 {
+      margin-bottom: 10px;
+      color: #00695c;
+    }
+
+    .card p {
+      color: #555;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 22px;
+      background: #00695c;
+      color: white;
+      text-decoration: none;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #004d40;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #888;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>SmartTrash IoT</h1>
+  <p>Smart Waste Management & Real-Time Monitoring System</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Public Dashboard</h2>
+    <p>
+      View real-time waste bin status, fill level,
+      and basic analytics through this public dashboard.
+    </p>
+    <a href="User-DashBoard.html" class="btn">View Dashboard</a>
+  </div>
+
+  <div class="card">
+    <h2>Admin Access</h2>
+    <p>
+      Secure login for authorities to monitor,
+      analyze data, and manage waste collection.
+    </p>
+    <a href="login.html" class="btn">Admin Login</a>
+  </div>
+
+</div>
+
+<footer>
+  © 2025 SmartTrash IoT | Diploma IT Project
+</footer>
+
+</body>
+</html>
+
