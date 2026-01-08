@@ -1,43 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>SmartTrash – Public Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>SmartTrash – User Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <style>
-    body { margin:0; font-family: Arial, sans-serif; background:#f4f6f9; }
-    header {
-      background:#00695c; color:white; padding:15px 25px; font-size:20px;
-    }
-    .container { padding:20px; }
-    .card {
-      background:white; padding:20px; border-radius:10px;
-      box-shadow:0 2px 8px rgba(0,0,0,.1); margin-bottom:20px;
-    }
-    #map { height:300px; border-radius:8px; }
-    .status { font-weight:bold; color:green; }
-  </style>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+}
+
+/* HEADER */
+header {
+  background: #00695c;
+  color: white;
+  padding: 16px 25px;
+}
+
+header h2 {
+  margin: 0;
+}
+
+header small {
+  opacity: 0.9;
+}
+
+/* TOP BUTTONS */
+.top-buttons {
+  background: #e0f2f1;
+  padding: 15px 25px;
+}
+
+.top-buttons button {
+  background: #00695c;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  margin-right: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* CONTENT */
+.container {
+  padding: 25px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+  margin-bottom: 25px;
+}
+
+.status-green {
+  color: green;
+  font-weight: bold;
+}
+
+#map {
+  height: 300px;
+  border-radius: 10px;
+}
+
+/* ===== CHATBOT ===== */
+#chatbot {
+  position: fixed;
+  bottom: 90px;
+  right: 25px;
+  width: 380px;
+  height: 520px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  display: none;
+  flex-direction: column;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+#chatbot-header {
+  background: #00695c;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-weight: bold;
+}
+
+#chatbot-body {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  background: #f9f9f9;
+  font-size: 15px;
+}
+
+#chatbot-body p {
+  margin: 8px 0;
+}
+
+.user {
+  color: #00695c;
+  font-weight: bold;
+}
+
+.bot {
+  color: #333;
+}
+
+#chatbot-input {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+
+#chatbot-input input {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  font-size: 15px;
+  outline: none;
+}
+
+#chatbot-input button {
+  background: #00695c;
+  color: white;
+  border: none;
+  padding: 0 18px;
+  cursor: pointer;
+}
+
+/* FLOAT BUTTON */
+#chatbot-toggle {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 60px;
+  height: 60px;
+  background: #00695c;
+  color: white;
+  border-radius: 50%;
+  font-size: 26px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+</style>
 </head>
 
 <body>
 
-<header>SmartTrash – Public Information</header>
+<header>
+  <h2>SmartTrash – User Dashboard ♻️</h2>
+  <small>Tong pun ada dashboard, manusia jangan cemburu 😜</small>
+</header>
+
+<div class="top-buttons">
+  <button onclick="scrollToSection('status')">📊 Status Tong</button>
+  <button onclick="scrollToSection('location')">📍 Location</button>
+  <button onclick="toggleChatbot()">🤖 Chatbot</button>
+</div>
 
 <div class="container">
 
-  <div class="card">
-    <h3>Bin Status</h3>
-    <p><strong>Location:</strong> Terengganu, Malaysia</p>
-    <p class="status">Status: NORMAL (65%)</p>
+  <!-- STATUS -->
+  <div class="card" id="status">
+    <h3>Status Tong Sampah</h3>
+    <p><strong>Lokasi:</strong> Terengganu</p>
+    <p><strong>Isi:</strong> 65%</p>
+    <p class="status-green">Status: NORMAL (Belum penuh, jangan panik 😌)</p>
   </div>
 
-  <div class="card">
-    <h3>Bin Location</h3>
+  <!-- MAP -->
+  <div class="card" id="location">
+    <h3>Lokasi Tong Pintar</h3>
     <div id="map"></div>
   </div>
 
@@ -46,24 +191,62 @@
 <!-- CHATBOT -->
 <div id="chatbot">
   <div id="chatbot-header">SmartTrash Bot 🤖</div>
-  <div id="chatbot-body"></div>
+  <div id="chatbot-body">
+    <p class="bot">🤖 Hai! Tanya saya tentang tong sampah atau projek ni 😄</p>
+  </div>
   <div id="chatbot-input">
-    <input type="text" id="userInput" placeholder="Ask something..." />
+    <input type="text" id="userInput" placeholder="Tanya apa-apa..." />
     <button onclick="sendMessage()">Send</button>
   </div>
 </div>
+
 <div id="chatbot-toggle" onclick="toggleChatbot()">💬</div>
 
-<script src="chatbot.js"></script>
-
 <script>
-  // MAP (Terengganu)
-  const map = L.map("map").setView([5.3302, 103.1408], 13);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution:"© OpenStreetMap"
-  }).addTo(map);
-  L.marker([5.3302, 103.1408]).addTo(map)
-    .bindPopup("SmartTrash Bin Location");
+// MAP
+const map = L.map("map").setView([5.3302, 103.1408], 13);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "© OpenStreetMap"
+}).addTo(map);
+L.marker([5.3302, 103.1408]).addTo(map)
+  .bindPopup("SmartTrash Bin – Terengganu");
+
+// CHATBOT
+function toggleChatbot() {
+  const bot = document.getElementById("chatbot");
+  bot.style.display = bot.style.display === "flex" ? "none" : "flex";
+}
+
+function sendMessage() {
+  const input = document.getElementById("userInput");
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  const body = document.getElementById("chatbot-body");
+  body.innerHTML += `<p class="user">👤 ${msg}</p>`;
+
+  let reply = "🤖 Saya belum pandai lagi, tapi tong ni belum penuh 😄";
+
+  if (msg.toLowerCase().includes("status"))
+    reply = "📊 Status tong: NORMAL, isi 65%.";
+
+  if (msg.toLowerCase().includes("lokasi"))
+    reply = "📍 Lokasi tong: Terengganu, Malaysia.";
+
+  if (msg.toLowerCase().includes("penuh"))
+    reply = "🚨 Jangan risau, belum penuh lagi 😎";
+
+  setTimeout(() => {
+    body.innerHTML += `<p class="bot">${reply}</p>`;
+    body.scrollTop = body.scrollHeight;
+  }, 500);
+
+  input.value = "";
+}
+
+function scrollToSection(id) {
+  document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+}
 </script>
 
 </body>
