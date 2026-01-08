@@ -2,12 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>SmartTrash – User Dashboard</title>
+<title>SmartTrash – Report a Problem</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- Leaflet -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
 body {
@@ -20,175 +16,73 @@ body {
 header {
   background: #00695c;
   color: white;
-  padding: 16px 20px;
+  padding: 20px;
 }
 
 header h2 {
   margin: 0;
-  font-size: 20px;
 }
 
-header small {
-  opacity: 0.9;
-  font-size: 13px;
+/* CONTAINER */
+.container {
+  padding: 25px;
 }
 
-/* TOP BUTTONS */
-.top-buttons {
-  background: #e0f2f1;
-  padding: 12px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+/* CARD */
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  max-width: 600px;
+  margin: auto;
 }
 
-.top-buttons button {
+label {
+  font-weight: bold;
+  display: block;
+  margin-top: 10px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
   background: #00695c;
   color: white;
   border: none;
-  padding: 10px 14px;
+  padding: 12px 20px;
   border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
 }
 
-/* CONTENT */
-.container {
-  padding: 20px;
+/* IMAGE PREVIEW */
+#preview {
+  display: none;
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
 }
 
-.card {
-  background: white;
-  padding: 18px;
-  border-radius: 12px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
-}
-
-.status-green {
+/* SUCCESS MESSAGE */
+.success {
+  display: none;
+  margin-top: 15px;
   color: green;
   font-weight: bold;
-}
-
-#map {
-  height: 260px;
-  border-radius: 10px;
-}
-
-/* ===== CHATBOT ===== */
-#chatbot {
-  position: fixed;
-  bottom: 90px;
-  right: 20px;
-  width: 340px;
-  height: 480px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-  display: none;
-  flex-direction: column;
-  z-index: 9999;
-  overflow: hidden;
-}
-
-#chatbot-header {
-  background: #00695c;
-  color: white;
-  padding: 14px;
-  text-align: center;
-  font-weight: bold;
-}
-
-#chatbot-body {
-  flex: 1;
-  padding: 14px;
-  overflow-y: auto;
-  background: #f9f9f9;
-  font-size: 15px;
-}
-
-.user {
-  color: #00695c;
-  font-weight: bold;
-}
-
-.bot {
-  color: #333;
-}
-
-#chatbot-input {
-  display: flex;
-  border-top: 1px solid #ddd;
-}
-
-#chatbot-input input {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  font-size: 15px;
-  outline: none;
-}
-
-#chatbot-input button {
-  background: #00695c;
-  color: white;
-  border: none;
-  padding: 0 18px;
-}
-
-/* FLOAT BUTTON */
-#chatbot-toggle {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  background: #00695c;
-  color: white;
-  border-radius: 50%;
-  font-size: 26px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
-
-/* ===================== */
-/* 📱 MOBILE VERSION */
-/* ===================== */
-@media (max-width: 768px) {
-
-  header h2 {
-    font-size: 18px;
-  }
-
-  .top-buttons button {
-    width: 100%;
-  }
-
-  .container {
-    padding: 15px;
-  }
-
-  #map {
-    height: 220px;
-  }
-
-  /* CHATBOT FULL MOBILE */
-  #chatbot {
-    width: 100%;
-    height: 70%;
-    right: 0;
-    bottom: 0;
-    border-radius: 20px 20px 0 0;
-  }
-
-  #chatbot-toggle {
-    width: 56px;
-    height: 56px;
-    font-size: 24px;
-  }
 }
 </style>
 </head>
@@ -196,91 +90,90 @@ header small {
 <body>
 
 <header>
-  <h2>SmartTrash – User Dashboard ♻️</h2>
-  <small>Tong pun ada dashboard, manusia jangan cemburu 😜</small>
+  <h2>📝 Report a Problem</h2>
+  <p>Laporkan masalah seperti sampah bersepah atau tong rosak</p>
 </header>
 
-<div class="top-buttons">
-  <button onclick="scrollToSection('status')">📊 Status Tong</button>
-  <button onclick="scrollToSection('location')">📍 Location</button>
-  <button onclick="toggleChatbot()">🤖 Chatbot</button>
-  <button onclick="location.href='usercomplaint.html'">📝 Report Problem</button>
-</div>
-
 <div class="container">
+  <div class="card">
 
-  <div class="card" id="status">
-    <h3>Status Tong Sampah</h3>
-    <p><strong>Lokasi:</strong> Terengganu</p>
-    <p><strong>Isi:</strong> 65%</p>
-    <p class="status-green">Status: NORMAL (Belum penuh 😌)</p>
+    <label>Issue Type</label>
+    <select id="issueType">
+      <option>Sampah Bersepah</option>
+      <option>Tong Rosak</option>
+      <option>Tong Hilang</option>
+      <option>Bau Busuk</option>
+      <option>Lain-lain</option>
+    </select>
+
+    <label>Location</label>
+    <input type="text" id="location" placeholder="Contoh: Kuala Terengganu">
+
+    <label>Description</label>
+    <textarea id="description" rows="4"
+      placeholder="Terangkan masalah dengan ringkas..."></textarea>
+
+    <label>Upload Photo (optional)</label>
+    <input type="file" id="photo" accept="image/*">
+
+    <img id="preview" alt="Image Preview">
+
+    <button onclick="submitComplaint()">Submit Report</button>
+
+    <p class="success" id="successMsg">
+      ✅ Complaint submitted successfully!
+    </p>
+
+    <br>
+    <button onclick="window.location.href='index.html'">⬅ Back</button>`
+
   </div>
-
-  <div class="card" id="location">
-    <h3>Lokasi Tong Pintar</h3>
-    <div id="map"></div>
-  </div>
-
 </div>
-
-<!-- CHATBOT -->
-<div id="chatbot">
-  <div id="chatbot-header">SmartTrash Bot 🤖</div>
-  <div id="chatbot-body">
-    <p class="bot">Hai! Tanya pasal tong sampah 😄</p>
-  </div>
-  <div id="chatbot-input">
-    <input type="text" id="userInput" placeholder="Tanya apa-apa..." />
-    <button onclick="sendMessage()">Send</button>
-  </div>
-</div>
-
-<div id="chatbot-toggle" onclick="toggleChatbot()">💬</div>
 
 <script>
-// MAP
-const map = L.map("map").setView([5.3302, 103.1408], 13);
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "© OpenStreetMap"
-}).addTo(map);
-L.marker([5.3302, 103.1408]).addTo(map);
+function submitComplaint() {
+  const type = document.getElementById("issueType").value;
+  const location = document.getElementById("location").value;
+  const desc = document.getElementById("description").value;
 
-// CHATBOT
-function toggleChatbot() {
-  const bot = document.getElementById("chatbot");
-  bot.style.display = bot.style.display === "flex" ? "none" : "flex";
-}
+  if (location === "" || desc === "") {
+    alert("Please fill in all required fields.");
+    return;
+  }
 
-function sendMessage() {
-  const input = document.getElementById("userInput");
-  const msg = input.value.trim();
-  if (!msg) return;
+  // DEMO ONLY (no backend)
+  console.log("Complaint Submitted:", {
+    type: type,
+    location: location,
+    description: desc
+  });
 
-  const body = document.getElementById("chatbot-body");
-  body.innerHTML += `<p class="user">👤 ${msg}</p>`;
+  document.getElementById("successMsg").style.display = "block";
 
-  let reply = "🤖 Tong ni masih okay 😄";
-
-  if (msg.toLowerCase().includes("status"))
-    reply = "📊 Status: NORMAL (65%).";
-
-  if (msg.toLowerCase().includes("lokasi"))
-    reply = "📍 Terengganu, Malaysia.";
-
-  if (msg.toLowerCase().includes("penuh"))
-    reply = "🚨 Belum penuh, jangan panik 😎";
+  // Reset form
+  document.getElementById("location").value = "";
+  document.getElementById("description").value = "";
+  document.getElementById("photo").value = "";
+  document.getElementById("preview").style.display = "none";
 
   setTimeout(() => {
-    body.innerHTML += `<p class="bot">${reply}</p>`;
-    body.scrollTop = body.scrollHeight;
-  }, 500);
-
-  input.value = "";
+    document.getElementById("successMsg").style.display = "none";
+  }, 3000);
 }
 
-function scrollToSection(id) {
-  document.getElementById(id).scrollIntoView({ behavior: "smooth" });
-}
+// IMAGE PREVIEW
+document.getElementById("photo").addEventListener("change", function () {
+  const file = this.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const img = document.getElementById("preview");
+    img.src = e.target.result;
+    img.style.display = "block";
+  };
+  reader.readAsDataURL(file);
+});
 </script>
 
 </body>
