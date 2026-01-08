@@ -7,56 +7,82 @@
 
 <style>
 body {
-  margin:0;
+  margin: 0;
   font-family: Arial, sans-serif;
-  background:#f4f6f9;
+  background: #f4f6f9;
 }
 
+/* HEADER */
 header {
-  background:#00695c;
-  color:white;
-  padding:20px;
+  background: #00695c;
+  color: white;
+  padding: 20px;
 }
 
+header h2 {
+  margin: 0;
+}
+
+/* CONTAINER */
 .container {
-  padding:25px;
+  padding: 25px;
 }
 
+/* CARD */
 .card {
-  background:white;
-  padding:25px;
-  border-radius:12px;
-  box-shadow:0 2px 10px rgba(0,0,0,0.1);
-  max-width:600px;
-  margin:auto;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  max-width: 600px;
+  margin: auto;
 }
 
 label {
-  font-weight:bold;
+  font-weight: bold;
+  display: block;
+  margin-top: 10px;
 }
 
 input, select, textarea {
-  width:100%;
-  padding:10px;
-  margin-top:5px;
-  margin-bottom:15px;
-  border-radius:6px;
-  border:1px solid #ccc;
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+textarea {
+  resize: vertical;
 }
 
 button {
-  background:#00695c;
-  color:white;
-  border:none;
-  padding:12px 18px;
-  border-radius:20px;
-  cursor:pointer;
+  background: #00695c;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
+/* IMAGE PREVIEW */
+#preview {
+  display: none;
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+/* SUCCESS MESSAGE */
 .success {
-  color:green;
-  font-weight:bold;
-  display:none;
+  display: none;
+  margin-top: 15px;
+  color: green;
+  font-weight: bold;
 }
 </style>
 </head>
@@ -65,17 +91,14 @@ button {
 
 <header>
   <h2>📝 Report a Problem</h2>
+  <p>Laporkan masalah seperti sampah bersepah atau tong rosak</p>
 </header>
 
 <div class="container">
   <div class="card">
-    <p>
-      Use this form to report issues such as scattered waste,
-      damaged bins, or missing bins.
-    </p>
 
     <label>Issue Type</label>
-    <select id="type">
+    <select id="issueType">
       <option>Sampah Bersepah</option>
       <option>Tong Rosak</option>
       <option>Tong Hilang</option>
@@ -84,10 +107,16 @@ button {
     </select>
 
     <label>Location</label>
-    <input type="text" id="location" placeholder="e.g. Kuala Terengganu">
+    <input type="text" id="location" placeholder="Contoh: Kuala Terengganu">
 
     <label>Description</label>
-    <textarea id="desc" rows="4" placeholder="Describe the problem..."></textarea>
+    <textarea id="description" rows="4"
+      placeholder="Terangkan masalah dengan ringkas..."></textarea>
+
+    <label>Upload Photo (optional)</label>
+    <input type="file" id="photo" accept="image/*">
+
+    <img id="preview" alt="Image Preview">
 
     <button onclick="submitComplaint()">Submit Report</button>
 
@@ -96,19 +125,55 @@ button {
     </p>
 
     <br>
-    <button onclick="location.href='index.html'">⬅ Back</button>
+    <button onclick="window.location.href='index.html'">⬅ Back</button>
+
   </div>
 </div>
 
 <script>
 function submitComplaint() {
-  // DEMO ONLY – no backend
+  const type = document.getElementById("issueType").value;
+  const location = document.getElementById("location").value;
+  const desc = document.getElementById("description").value;
+
+  if (location === "" || desc === "") {
+    alert("Please fill in all required fields.");
+    return;
+  }
+
+  // DEMO ONLY (no backend)
+  console.log("Complaint Submitted:", {
+    type: type,
+    location: location,
+    description: desc
+  });
+
   document.getElementById("successMsg").style.display = "block";
 
-  // Clear form
+  // Reset form
   document.getElementById("location").value = "";
-  document.getElementById("desc").value = "";
+  document.getElementById("description").value = "";
+  document.getElementById("photo").value = "";
+  document.getElementById("preview").style.display = "none";
+
+  setTimeout(() => {
+    document.getElementById("successMsg").style.display = "none";
+  }, 3000);
 }
+
+// IMAGE PREVIEW
+document.getElementById("photo").addEventListener("change", function () {
+  const file = this.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const img = document.getElementById("preview");
+    img.src = e.target.result;
+    img.style.display = "block";
+  };
+  reader.readAsDataURL(file);
+});
 </script>
 
 </body>
