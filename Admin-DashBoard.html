@@ -1,206 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>SmartTrash Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>SmartTrash Admin Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+}
 
-    /* HEADER */
-    header {
-      background: #00695c;
-      color: white;
-      padding: 18px 30px;
-      font-size: 22px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+/* HEADER */
+header {
+  background: #00695c;
+  color: white;
+  padding: 18px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    header button {
-      background: #004d40;
-      border: none;
-      color: white;
-      padding: 8px 16px;
-      cursor: pointer;
-      border-radius: 5px;
-    }
+header h2 {
+  margin: 0;
+}
 
-    /* CONTAINER */
-    .container {
-      padding: 25px;
-    }
+header button {
+  background: #004d40;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
-    /* STAT CARDS */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-bottom: 25px;
-    }
+/* NAV */
+.nav {
+  background: #e0f2f1;
+  padding: 15px 30px;
+}
 
-    .stat-card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
+.nav button {
+  background: #00695c;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  margin-right: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+}
 
-    .stat-card h3 {
-      margin: 0;
-      font-size: 16px;
-      color: #555;
-    }
+/* CONTAINER */
+.container {
+  padding: 25px;
+}
 
-    .stat-card p {
-      font-size: 28px;
-      font-weight: bold;
-      margin: 10px 0 0;
-      color: #00695c;
-    }
+/* CARD */
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin-bottom: 25px;
+}
 
-    /* GRID */
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 25px;
-      margin-bottom: 25px;
-    }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
 
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
+.stat-box h3 {
+  margin: 0;
+  color: #555;
+}
 
-    #map {
-      height: 300px;
-      border-radius: 10px;
-    }
+.stat-box p {
+  font-size: 28px;
+  font-weight: bold;
+  color: #00695c;
+}
 
-    .status-full {
-      color: red;
-      font-weight: bold;
-    }
+#map {
+  height: 300px;
+  border-radius: 10px;
+}
 
-    .status-normal {
-      color: green;
-      font-weight: bold;
-    }
+.status-normal {
+  color: green;
+  font-weight: bold;
+}
 
-    @media (max-width: 900px) {
-      .stats, .grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+@media (max-width: 900px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
 </head>
 
 <body>
 
 <!-- LOGIN PROTECTION -->
 <script>
-  if (localStorage.getItem("loggedIn") !== "true") {
-    window.location.href = "login.html";
-  }
+if (localStorage.getItem("loggedIn") !== "true") {
+  window.location.href = "login.html";
+}
 </script>
 
 <header>
-  SmartTrash IoT Dashboard
+  <h2>SmartTrash Admin Dashboard ♻️</h2>
   <button onclick="logout()">Logout</button>
 </header>
 
+<!-- NAVIGATION -->
+<div class="nav">
+  <button onclick="scrollToSection('status')">📊 Status</button>
+  <button onclick="scrollToSection('location')">📍 Location</button>
+  <button onclick="scrollToSection('weekly')">📈 Weekly Data</button>
+
+  <!-- PAGE NAVIGATION -->
+  <button onclick="window.location.href='weekly.html'">📆 Weekly Report</button>
+  <button onclick="window.location.href='Admin-Monthly.html'">🗓 Monthly Data</button>
+</div>
+
 <div class="container">
 
-  <!-- TOP STATS -->
-  <div class="stats">
-    <div class="stat-card">
-      <h3>Total Bins</h3>
-      <p>1</p>
+  <!-- STATUS -->
+  <div class="card" id="status">
+    <h3>Status Summary</h3>
+
+    <div class="stats">
+      <div class="stat-box">
+        <h3>Total Bins</h3>
+        <p>1</p>
+      </div>
+      <div class="stat-box">
+        <h3>Full Bins</h3>
+        <p>0</p>
+      </div>
+      <div class="stat-box">
+        <h3>Average Fill</h3>
+        <p>65%</p>
+      </div>
     </div>
-    <div class="stat-card">
-      <h3>Full Bins</h3>
-      <p>0</p>
-    </div>
-    <div class="stat-card">
-      <h3>Average Fill (%)</h3>
-      <p>65%</p>
-    </div>
+
+    <p><strong>Bin ID:</strong> BIN-001</p>
+    <p><strong>Fill Level:</strong> 65%</p>
+    <p class="status-normal">Status: NORMAL (Belum penuh)</p>
   </div>
 
-  <!-- MAP & STATUS -->
-  <div class="grid">
-
-    <div class="card">
-      <h3>Bin Location (Terengganu)</h3>
-      <div id="map"></div>
-    </div>
-
-    <div class="card">
-      <h3>Bin Status</h3>
-      <p><strong>Bin ID:</strong> BIN-001</p>
-      <p><strong>Fill Level:</strong> 65%</p>
-      <p class="status-normal">Status: NORMAL</p>
-    </div>
-
+  <!-- LOCATION -->
+  <div class="card" id="location">
+    <h3>Bin Location (Terengganu)</h3>
+    <div id="map"></div>
   </div>
 
-  <!-- GRAPH -->
-  <div class="card">
-    <h3>Waste Level Trend</h3>
+  <!-- WEEKLY DATA -->
+  <div class="card" id="weekly">
+    <h3>Waste Level (Monday – Sunday)</h3>
     <canvas id="wasteChart"></canvas>
   </div>
 
 </div>
 
 <script>
-  function logout() {
-    localStorage.removeItem("loggedIn");
-    window.location.href = "login.html";
-  }
+function logout() {
+  localStorage.removeItem("loggedIn");
+  window.location.href = "login.html";
+}
 
-  // MAP (Terengganu)
-  const map = L.map("map").setView([5.3302, 103.1408], 13);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "© OpenStreetMap"
-  }).addTo(map);
+function scrollToSection(id) {
+  document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+}
 
-  L.marker([5.3302, 103.1408])
-    .addTo(map)
-    .bindPopup("SmartTrash Bin Location");
+/* MAP */
+const map = L.map("map").setView([5.3302, 103.1408], 13);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "© OpenStreetMap"
+}).addTo(map);
 
-  // CHART
-  new Chart(document.getElementById("wasteChart"), {
-    type: "line",
-    data: {
-      labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-      datasets: [{
-        label: "Fill Level (%)",
-        data: [30,45,55,65,80,60,40],
-        borderWidth: 2,
-        tension: 0.3
-      }]
-    },
-    options: {
-      scales: {
-        y: { beginAtZero: true, max: 100 }
+L.marker([5.3302, 103.1408])
+  .addTo(map)
+  .bindPopup("SmartTrash Bin – Terengganu");
+
+/* WEEKLY CHART */
+new Chart(document.getElementById("wasteChart"), {
+  type: "line",
+  data: {
+    labels: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+    datasets: [{
+      label: "Fill Level (%)",
+      data: [30, 45, 55, 65, 80, 60, 40],
+      borderColor: "#00695c",
+      backgroundColor: "rgba(0,105,92,0.1)",
+      tension: 0.3,
+      borderWidth: 3,
+      fill: true
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100
       }
     }
-  });
+  }
+});
 </script>
 
 </body>
