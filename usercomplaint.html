@@ -12,23 +12,16 @@ body {
   background: #f4f6f9;
 }
 
-/* HEADER */
 header {
   background: #00695c;
   color: white;
   padding: 20px;
 }
 
-header h2 {
-  margin: 0;
-}
-
-/* CONTAINER */
 .container {
   padding: 25px;
 }
 
-/* CARD */
 .card {
   background: white;
   padding: 25px;
@@ -48,10 +41,9 @@ input, select, textarea {
   width: 100%;
   padding: 10px;
   margin-top: 6px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 14px;
 }
 
 textarea {
@@ -65,10 +57,17 @@ button {
   padding: 12px 20px;
   border-radius: 20px;
   cursor: pointer;
-  font-size: 14px;
+  opacity: 0.6;
 }
 
-/* IMAGE PREVIEW */
+button.active {
+  opacity: 1;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
 #preview {
   display: none;
   width: 100%;
@@ -77,12 +76,37 @@ button {
   border: 1px solid #ddd;
 }
 
-/* SUCCESS MESSAGE */
 .success {
   display: none;
   margin-top: 15px;
   color: green;
   font-weight: bold;
+}
+
+/* CHECKLIST */
+.checklist {
+  margin-top: 15px;
+  font-size: 13px;
+  color: #555;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.box {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #999;
+  border-radius: 3px;
+  margin-right: 8px;
+}
+
+.box.checked {
+  background: #00695c;
+  border-color: #00695c;
 }
 </style>
 </head>
@@ -91,7 +115,6 @@ button {
 
 <header>
   <h2>📝 Report a Problem</h2>
-  <p>Laporkan masalah seperti sampah bersepah atau tong rosak</p>
 </header>
 
 <div class="container">
@@ -107,62 +130,84 @@ button {
     </select>
 
     <label>Location</label>
-    <input type="text" id="location" placeholder="Contoh: Kuala Terengganu">
+    <input type="text" id="location">
 
     <label>Description</label>
-    <textarea id="description" rows="4"
-      placeholder="Terangkan masalah dengan ringkas..."></textarea>
+    <textarea id="description" rows="4"></textarea>
 
-    <label>Upload Photo (optional)</label>
+    <label>Upload Photo</label>
     <input type="file" id="photo" accept="image/*">
 
-    <img id="preview" alt="Image Preview">
+    <img id="preview">
 
-    <button onclick="submitComplaint()">Submit Report</button>
-
-    <p class="success" id="successMsg">
-      ✅ Complaint submitted successfully!
-    </p>
+    <div class="checklist">
+      <div class="check-item">
+        <div id="checkLocation" class="box"></div>
+        <span>Sila isi lokasi</span>
+      </div>
+      <div class="check-item">
+        <div id="checkDesc" class="box"></div>
+        <span>Sila isi masalah</span>
+      </div>
+      <div class="check-item">
+        <div id="checkPhoto" class="box"></div>
+        <span>Sila upload gambar bukti</span>
+      </div>
+    </div>
 
     <br>
-    <button onclick="window.location.href='index.html'">⬅ Back</button>`
+
+    <button id="submitBtn" onclick="submitComplaint()" disabled>
+      Submit Report
+    </button>
+
+    <p class="success" id="successMsg">
+      ✅ Report berjaya dihantar!
+    </p>
 
   </div>
 </div>
 
 <script>
-function submitComplaint() {
-  const type = document.getElementById("issueType").value;
-  const location = document.getElementById("location").value;
-  const desc = document.getElementById("description").value;
 
-  if (location === "" || desc === "") {
-    alert("Please fill in all required fields.");
-    return;
-  }
+const scriptURL =
+"https://script.google.com/macros/s/AKfycbzu3-yVodV6_vFWn1suAK-MHyWO98tL-O3llMr0lzbZABzM2ohDAtVh6nWEk37N1_Ys/exec";
 
-  // DEMO ONLY (no backend)
-  console.log("Complaint Submitted:", {
-    type: type,
-    location: location,
-    description: desc
-  });
+const locationInput = document.getElementById("location");
+const descInput = document.getElementById("description");
+const photoInput = document.getElementById("photo");
+const submitBtn = document.getElementById("submitBtn");
 
-  document.getElementById("successMsg").style.display = "block";
-
-  // Reset form
-  document.getElementById("location").value = "";
-  document.getElementById("description").value = "";
-  document.getElementById("photo").value = "";
-  document.getElementById("preview").style.display = "none";
-
-  setTimeout(() => {
-    document.getElementById("successMsg").style.display = "none";
-  }, 3000);
+function toggleCheck(id, condition) {
+  const box = document.getElementById(id);
+  condition ? box.classList.add("checked") : box.classList.remove("checked");
 }
 
-// IMAGE PREVIEW
-document.getElementById("photo").addEventListener("change", function () {
+function validateForm() {
+
+  let validLocation = locationInput.value.trim() !== "";
+  let validDesc = descInput.value.trim() !== "";
+  let validPhoto = photoInput.files.length > 0;
+
+  toggleCheck("checkLocation", validLocation);
+  toggleCheck("checkDesc", validDesc);
+  toggleCheck("checkPhoto", validPhoto);
+
+  if (validLocation && validDesc && validPhoto) {
+    submitBtn.disabled = false;
+    submitBtn.classList.add("active");
+  } else {
+    submitBtn.disabled = true;
+    submitBtn.classList.remove("active");
+  }
+}
+
+locationInput.addEventListener("input", validateForm);
+descInput.addEventListener("input", validateForm);
+photoInput.addEventListener("change", function () {
+
+  validateForm();
+
   const file = this.files[0];
   if (!file) return;
 
@@ -174,6 +219,41 @@ document.getElementById("photo").addEventListener("change", function () {
   };
   reader.readAsDataURL(file);
 });
+
+function submitComplaint() {
+
+  if (submitBtn.disabled) return;
+
+  const file = photoInput.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function (e) {
+
+    fetch(scriptURL, {
+      method: "POST",
+      body: JSON.stringify({
+        issue: document.getElementById("issueType").value,
+        location: locationInput.value,
+        description: descInput.value,
+        image: e.target.result
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("successMsg").style.display = "block";
+      setTimeout(() => location.reload(), 2000);
+    })
+    .catch(err => {
+      alert("Error menghantar report ❌");
+      console.log(err);
+    });
+  };
+
+  reader.readAsDataURL(file);
+}
+
 </script>
 
 </body>
