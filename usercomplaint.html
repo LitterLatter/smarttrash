@@ -83,7 +83,6 @@ button:disabled {
   font-weight: bold;
 }
 
-/* CHECKLIST */
 .checklist {
   margin-top: 15px;
   font-size: 13px;
@@ -170,8 +169,7 @@ button:disabled {
 
 <script>
 
-const scriptURL =
-"https://script.google.com/macros/s/AKfycbzu3-yVodV6_vFWn1suAK-MHyWO98tL-O3llMr0lzbZABzM2ohDAtVh6nWEk37N1_Ys/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbwKRm5UfXsQgOhhgziWOW3MFYWJ0so_aaipCAsuKxGqm_TVJS0UMb32RzhX5M8vJCN_/exec";
 
 const locationInput = document.getElementById("location");
 const descInput = document.getElementById("description");
@@ -204,6 +202,7 @@ function validateForm() {
 
 locationInput.addEventListener("input", validateForm);
 descInput.addEventListener("input", validateForm);
+
 photoInput.addEventListener("change", function () {
 
   validateForm();
@@ -231,19 +230,26 @@ function submitComplaint() {
 
   reader.onload = function (e) {
 
+    const formData = new FormData();
+    formData.append("issueType", document.getElementById("issueType").value);
+    formData.append("location", locationInput.value);
+    formData.append("description", descInput.value);
+    formData.append("photo", e.target.result);
+
     fetch(scriptURL, {
       method: "POST",
-      body: JSON.stringify({
-        issue: document.getElementById("issueType").value,
-        location: locationInput.value,
-        description: descInput.value,
-        image: e.target.result
-      })
+      body: formData
     })
     .then(res => res.json())
     .then(data => {
-      document.getElementById("successMsg").style.display = "block";
-      setTimeout(() => location.reload(), 2000);
+
+      if (data.status === "success") {
+        document.getElementById("successMsg").style.display = "block";
+        setTimeout(() => location.reload(), 2000);
+      } else {
+        alert("Error: " + data.message);
+      }
+
     })
     .catch(err => {
       alert("Error menghantar report ❌");
