@@ -65,19 +65,16 @@
   </div>
 
   <script>
-  function login() {
-    const u = document.getElementById("username").value.trim();
-    const p = document.getElementById("password").value.trim();
-    const errorText = document.getElementById("error");
+function login() {
+  const u = document.getElementById("username").value;
+  const p = document.getElementById("password").value;
 
-    // Reset error message
-    errorText.style.display = "none";
-
-    if (u === "admin" && p === "12345") {
-      localStorage.setItem("loggedIn", "true");
-      window.location.href = "dashboard.html";
-    } else {
-      errorText.style.display = "block";
-    }
+  if (u === "admin" && p === "12345") {
+    localStorage.setItem("loggedIn", "true");
+    window.location.href = "Admin-DashBoard.html";
+  } else {
+    document.getElementById("error").style.display = "block";
   }
+}
 </script>
+
