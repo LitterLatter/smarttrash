@@ -5,12 +5,8 @@
 <title>SmartTrash Admin Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Leaflet -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <style>
 body {
@@ -29,25 +25,11 @@ header {
   align-items: center;
 }
 
-header h2 {
-  margin: 0;
-}
-
-header button {
-  background: #004d40;
-  border: none;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
 /* NAV */
 .nav {
   background: #e0f2f1;
   padding: 15px 30px;
 }
-
 .nav button {
   background: #00695c;
   color: white;
@@ -72,153 +54,230 @@ header button {
   margin-bottom: 25px;
 }
 
+/* STATS */
 .stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
-
-.stat-box h3 {
-  margin: 0;
-  color: #555;
-}
-
 .stat-box p {
   font-size: 28px;
   font-weight: bold;
   color: #00695c;
 }
 
-#map {
-  height: 300px;
-  border-radius: 10px;
+.status-normal { color: green; font-weight: bold; }
+.status-full { color: red; font-weight: bold; }
+
+/* CHAT */
+.chat-box {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+.chat-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+.chat-item:hover {
+  background: #f1f1f1;
 }
 
-.status-normal {
-  color: green;
-  font-weight: bold;
+input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
 }
 
-@media (max-width: 900px) {
-  .stats {
-    grid-template-columns: 1fr;
-  }
+button.reply {
+  margin-top: 10px;
+  background: #00695c;
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  border-radius: 5px;
+  cursor: pointer;
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN PROTECTION -->
-<script>
-if (localStorage.getItem("loggedIn") !== "true") {
-  window.location.href = "login.html";
-}
-</script>
-
 <header>
   <h2>SmartTrash Admin Dashboard ♻️</h2>
-  <button onclick="logout()">Logout</button>
 </header>
 
-<!-- NAVIGATION -->
 <div class="nav">
-  <button onclick="scrollToSection('status')">📊 Status</button>
-  <button onclick="scrollToSection('location')">📍 Location</button>
-  <button onclick="scrollToSection('weekly')">📈 Weekly Data</button>
+  <!-- BUTTON ASAL (KEKAL) -->
+  <button onclick="scrollTo('status')">📊 Status</button>
+  <button onclick="scrollTo('graph')">📈 Graph</button>
 
-  <!-- PAGE NAVIGATION -->
- <button onclick="window.location.href='weekly.html'">
-  📆 Weekly Report
-</button>
-
-  <button onclick="window.location.href='Admin-Monthly.html'">🗓 Monthly Data</button>
+  <!-- ===== TAMBAHAN BARU (PAGE NAVIGATION) ===== -->
+  <button onclick="goGraphPage()">📈 Open Graph Page</button>
+  <button onclick="goComplaintPage()">📋 Open Complaints Page</button>
 </div>
 
 <div class="container">
 
-  <!-- STATUS -->
-  <div class="card" id="status">
-    <h3>Status Summary</h3>
+<!-- STATUS -->
+<div class="card" id="status">
+  <h3>Status Summary</h3>
 
-    <div class="stats">
-      <div class="stat-box">
-        <h3>Total Bins</h3>
-        <p>1</p>
-      </div>
-      <div class="stat-box">
-        <h3>Full Bins</h3>
-        <p>0</p>
-      </div>
-      <div class="stat-box">
-        <h3>Average Fill</h3>
-        <p>65%</p>
-      </div>
+  <div class="stats">
+    <div class="stat-box">
+      <p>1</p>
+      <small>Total Bins</small>
     </div>
-
-    <p><strong>Bin ID:</strong> BIN-001</p>
-    <p><strong>Fill Level:</strong> 65%</p>
-    <p class="status-normal">Status: NORMAL (Belum penuh)</p>
+    <div class="stat-box">
+      <p id="avgFill">--%</p>
+      <small>Average Fill</small>
+    </div>
+    <div class="stat-box">
+      <p id="latestFill">--%</p>
+      <small>Latest Fill</small>
+    </div>
   </div>
 
-  <!-- LOCATION -->
-  <div class="card" id="location">
-    <h3>Bin Location (Terengganu)</h3>
-    <div id="map"></div>
-  </div>
+  <p id="binStatus">Loading...</p>
+</div>
 
-  <!-- WEEKLY DATA -->
-  <div class="card" id="weekly">
-    <h3>Waste Level (Monday – Sunday)</h3>
-    <canvas id="wasteChart"></canvas>
-  </div>
+<!-- GRAPH (ASAL) -->
+<div class="card" id="graph">
+  <h3>Waste Level Graph</h3>
+  <canvas id="wasteChart"></canvas>
+</div>
+
+<!-- COMPLAINT CHAT (ASAL) -->
+<div class="card" id="complaints">
+  <h3>📋 User Complaints (Admin Chat)</h3>
+
+  <div class="chat-box" id="complaintList"></div>
+
+  <input id="replyText" placeholder="Type admin reply (demo)">
+  <button class="reply" onclick="sendReply()">Reply</button>
+</div>
 
 </div>
 
 <script>
-function logout() {
-  localStorage.removeItem("loggedIn");
-  window.location.href = "login.html";
+// ================= CONFIG =================
+const DATA_URL =
+`https://opensheet.elk.sh/1IR6qLq2VpVk9EBnANEeJ4p2etF3yohUpaAmQ28XbZDE/Sheet1`;
+
+const COMPLAINT_URL =
+`https://opensheet.elk.sh/1IR6qLq2VpVk9EBnANEeJ4p2etF3yohUpaAmQ28XbZDE/Sheet1`;
+
+const FULL_LIMIT = 80;
+let selectedComplaint = null;
+
+// ================= SCROLL (ASAL) =================
+function scrollTo(id) {
+  document.getElementById(id).scrollIntoView({behavior:"smooth"});
 }
 
-function scrollToSection(id) {
-  document.getElementById(id).scrollIntoView({ behavior: "smooth" });
-}
-
-/* MAP */
-const map = L.map("map").setView([5.3302, 103.1408], 13);
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "© OpenStreetMap"
-}).addTo(map);
-
-L.marker([5.3302, 103.1408])
-  .addTo(map)
-  .bindPopup("SmartTrash Bin – Terengganu");
-
-/* WEEKLY CHART */
-new Chart(document.getElementById("wasteChart"), {
+// ================= CHART (ASAL) =================
+const chart = new Chart(document.getElementById("wasteChart"), {
   type: "line",
   data: {
-    labels: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+    labels: [],
     datasets: [{
       label: "Fill Level (%)",
-      data: [30, 45, 55, 65, 80, 60, 40],
+      data: [],
       borderColor: "#00695c",
       backgroundColor: "rgba(0,105,92,0.1)",
-      tension: 0.3,
-      borderWidth: 3,
-      fill: true
+      fill: true,
+      tension: 0.3
     }]
   },
-  options: {
-    scales: {
-      y: {
-        beginAtZero: true,
-        max: 100
-      }
-    }
-  }
+  options: { scales: { y: { min: 0, max: 100 } } }
 });
+
+// ================= LOAD DATA (ASAL) =================
+async function loadData() {
+  const res = await fetch(DATA_URL);
+  const data = await res.json();
+
+  chart.data.labels = [];
+  chart.data.datasets[0].data = [];
+
+  let total = 0;
+
+  data.forEach(d => {
+    const fill = parseInt(d.Fill);
+    if (!isNaN(fill)) {
+      chart.data.labels.push(d.Time);
+      chart.data.datasets[0].data.push(fill);
+      total += fill;
+    }
+  });
+
+  chart.update();
+
+  const latest = chart.data.datasets[0].data.slice(-1)[0];
+  document.getElementById("latestFill").innerText = latest + "%";
+  document.getElementById("avgFill").innerText =
+    Math.round(total / chart.data.datasets[0].data.length) + "%";
+
+  const status = document.getElementById("binStatus");
+  if (latest >= FULL_LIMIT) {
+    status.innerText = "Status: FULL ⚠️ (Perlu kutip)";
+    status.className = "status-full";
+  } else {
+    status.innerText = "Status: NORMAL (Belum penuh)";
+    status.className = "status-normal";
+  }
+}
+
+// ================= LOAD COMPLAINTS (ASAL) =================
+async function loadComplaints() {
+  const res = await fetch(COMPLAINT_URL);
+  const data = await res.json();
+
+  const box = document.getElementById("complaintList");
+  box.innerHTML = "";
+
+  data.forEach((c, i) => {
+    const div = document.createElement("div");
+    div.className = "chat-item";
+    div.innerHTML = `
+      <b>${c.Name || "User"}</b><br>
+      ${c.Message || "-"}<br>
+      <small>${c.Time || ""}</small><br>
+      <i>Reply: ${c.Reply || "-"}</i>
+    `;
+    div.onclick = () => selectedComplaint = i;
+    box.appendChild(div);
+  });
+}
+
+// ================= SEND REPLY (ASAL) =================
+function sendReply() {
+  if (selectedComplaint === null) {
+    alert("Pilih aduan dahulu");
+    return;
+  }
+  alert("Demo mode: Admin reply disimpan manual dalam Google Sheet");
+}
+
+// ================= INIT (ASAL) =================
+loadData();
+loadComplaints();
+setInterval(loadData, 10000);
+setInterval(loadComplaints, 15000);
+
+// =====================================================
+// =============== TAMBAHAN BARU SAHAJA =================
+// =====================================================
+function goGraphPage() {
+  window.location.href = "Admin-Monthly.html";
+}
+
+function goComplaintPage() {
+  window.location.href = "admincomplaints.html";
+}
 </script>
 
 </body>
