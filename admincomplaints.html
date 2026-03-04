@@ -8,233 +8,350 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f6f9;
+
+body{
+margin:0;
+font-family:Arial;
+background:#f4f6f9;
 }
 
-header {
-  background: #00695c;
-  color: white;
-  padding: 18px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* HEADER */
+header{
+background:#00695c;
+color:white;
+padding:18px 30px;
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
 
-header button {
-  background: #004d40;
-  border: none;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 5px;
-  cursor: pointer;
+header button{
+background:#004d40;
+border:none;
+color:white;
+padding:8px 16px;
+border-radius:5px;
+cursor:pointer;
 }
 
-.container {
-  padding: 25px;
+/* CONTAINER */
+.container{
+padding:25px;
 }
 
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  margin-bottom: 25px;
+/* CARD */
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
+margin-bottom:25px;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
+/* TABLE */
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
 }
 
-th, td {
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
+th,td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:left;
 }
 
-th {
-  background: #e0f2f1;
+th{
+background:#e0f2f1;
 }
 
-.status {
-  padding: 6px 12px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: bold;
+img{
+width:70px;
+border-radius:6px;
 }
 
-.pending {
-  background: #fff3cd;
-  color: #856404;
+/* STATUS */
+.status{
+padding:6px 12px;
+border-radius:12px;
+font-size:13px;
+font-weight:bold;
 }
 
-.progress {
-  background: #cce5ff;
-  color: #004085;
+.pending{
+background:#fff3cd;
+color:#856404;
 }
 
-.done {
-  background: #d4edda;
-  color: #155724;
+.progress{
+background:#cce5ff;
+color:#004085;
 }
 
-select {
-  padding: 4px;
+.done{
+background:#d4edda;
+color:#155724;
 }
 
-canvas {
-  max-width: 100%;
+select{
+padding:5px;
 }
+
+canvas{
+max-width:100%;
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
-  <h2>📋 Admin Complaints & Monthly Report</h2>
-  <button onclick="window.location.href='Admin-DashBoard.html'">
-    ⬅ Back
-  </button>
+<h2>📋 Admin Complaints & Monthly Report</h2>
+
+<button onclick="window.location.href='Admin-DashBoard.html'">
+⬅ Back
+</button>
+
 </header>
+
 
 <div class="container">
 
-  <!-- ===== COMPLAINT LIST ===== -->
-  <div class="card">
-    <h3>User Complaints List</h3>
+<!-- ================= COMPLAINT TABLE ================= -->
 
-    <table>
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>Complaint Type</th>
-          <th>Location</th>
-          <th>Description</th>
-          <th>Date</th>
-          <th>Status</th>
-        </tr>
-      </thead>
+<div class="card">
 
-      <tbody id="complaintTable">
-      </tbody>
-    </table>
-  </div>
+<h3>User Complaints List</h3>
 
-  <!-- ===== MONTHLY GRAPH ===== -->
-  <div class="card">
-    <h3>Monthly Average Fill Level (%)</h3>
-    <canvas id="monthlyChart"></canvas>
-  </div>
+<table>
+
+<thead>
+<tr>
+<th>No</th>
+<th>Issue</th>
+<th>Location</th>
+<th>Description</th>
+<th>Date</th>
+<th>Image</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody id="complaintTable"></tbody>
+
+</table>
 
 </div>
 
+
+<!-- ================= GRAPH ================= -->
+
+<div class="card">
+
+<h3>Monthly Average Fill Level (%)</h3>
+
+<canvas id="monthlyChart"></canvas>
+
+</div>
+
+</div>
+
+
 <script>
 
-// ================= URL =================
-const REPORT_URL =
-"https://script.google.com/macros/s/AKfycbxaLynWL1g4-iEV56DsfMSrrgKwvjIf9EmZI3L79QUXTTkU7Br6u5ptlPRc9fIeg4x3/exec";
+// ================= API =================
 
-const DATA_URL =
-"https://script.google.com/macros/s/AKfycbxaLynWL1g4-iEV56DsfMSrrgKwvjIf9EmZI3L79QUXTTkU7Br6u5ptlPRc9fIeg4x3/exec";
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyCbhiJIZC0-mZYOAYGwA6mEmkIiE4U5FseCrhnpApIOEFwX_QZHkwKv5vFQ8KNH3I/exec";
+
+
 
 // ================= LOAD COMPLAINTS =================
-async function loadComplaints() {
 
-  const res = await fetch(REPORT_URL);
-  const data = await res.json();
+async function loadComplaints(){
 
-  const table = document.getElementById("complaintTable");
-  table.innerHTML = "";
+try{
 
-  data.reverse().forEach((item, index) => {
+const res = await fetch(API_URL);
 
-    const date = new Date(item.time).toLocaleDateString();
+const result = await res.json();
 
-    table.innerHTML += `
-      <tr>
-        <td>${index + 1}</td>
-        <td>${item.issue}</td>
-        <td>${item.location}</td>
-        <td>${item.description}</td>
-        <td>${date}</td>
-        <td>
-          <select onchange="changeStatus(this)">
-            <option value="pending">Pending</option>
-            <option value="progress">In Progress</option>
-            <option value="done">Resolved</option>
-          </select>
-        </td>
-      </tr>
-    `;
-  });
+const rows = result.data || result;
+
+const table = document.getElementById("complaintTable");
+
+table.innerHTML="";
+
+rows.slice(1).reverse().forEach((row,index)=>{
+
+const time=row[0];
+const issue=row[1];
+const location=row[2];
+const description=row[3];
+const image=row[4];
+
+const date=new Date(time).toLocaleDateString();
+
+table.innerHTML+=`
+
+<tr>
+
+<td>${index+1}</td>
+
+<td>${issue}</td>
+
+<td>${location}</td>
+
+<td>${description}</td>
+
+<td>${date}</td>
+
+<td>
+${image ? `<a href="${image}" target="_blank">
+<img src="${image}">
+</a>` : "-"}
+</td>
+
+<td>
+
+<select class="status pending" onchange="changeStatus(this)">
+
+<option value="pending">Pending</option>
+
+<option value="progress">In Progress</option>
+
+<option value="done">Resolved</option>
+
+</select>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+}catch(err){
+
+console.error("Load complaint error:",err);
+
 }
 
-function changeStatus(select) {
-  const value = select.value;
-  select.className = "status " + value;
+}
+
+
+function changeStatus(select){
+
+select.className="status "+select.value;
+
 }
 
 loadComplaints();
 
+// AUTO REFRESH
+setInterval(loadComplaints,10000);
+
+
 
 // ================= CHART =================
-const ctx = document.getElementById("monthlyChart");
 
-const monthlyChart = new Chart(ctx, {
-  type: "bar",
-  data: {
-    labels: [],
-    datasets: [{
-      label: "Average Fill (%)",
-      data: [],
-      backgroundColor: "#00695c"
-    }]
-  },
-  options: {
-    scales: {
-      y: {
-        beginAtZero: true,
-        max: 100
-      }
-    }
-  }
+const ctx=document.getElementById("monthlyChart");
+
+const monthlyChart=new Chart(ctx,{
+
+type:"bar",
+
+data:{
+labels:[],
+datasets:[{
+
+label:"Average Fill (%)",
+
+data:[],
+
+backgroundColor:"#00695c"
+
+}]
+},
+
+options:{
+scales:{
+y:{
+beginAtZero:true,
+max:100
+}
+}
+}
+
 });
 
-async function loadMonthlyData() {
-  const res = await fetch(DATA_URL);
-  const data = await res.json();
 
-  const monthly = {};
 
-  data.forEach(row => {
-    if (!row.Time || !row.Fill) return;
+async function loadMonthlyData(){
 
-    const date = new Date(row.Time);
-    const key =
-      date.getFullYear() + "-" +
-      String(date.getMonth() + 1).padStart(2, "0");
+try{
 
-    if (!monthly[key]) {
-      monthly[key] = { total: 0, count: 0 };
-    }
+const res=await fetch(API_URL);
 
-    monthly[key].total += Number(row.Fill);
-    monthly[key].count++;
-  });
+const result=await res.json();
 
-  monthlyChart.data.labels = [];
-  monthlyChart.data.datasets[0].data = [];
+const rows=result.data || result;
 
-  Object.keys(monthly).sort().forEach(month => {
-    const avg = Math.round(monthly[month].total / monthly[month].count);
-    monthlyChart.data.labels.push(month);
-    monthlyChart.data.datasets[0].data.push(avg);
-  });
+const monthly={};
 
-  monthlyChart.update();
+rows.slice(1).forEach(row=>{
+
+const time=row[0];
+const fill=row[1];
+
+if(!time || !fill) return;
+
+const date=new Date(time);
+
+const key=
+date.getFullYear()+"-"+
+String(date.getMonth()+1).padStart(2,"0");
+
+if(!monthly[key]){
+
+monthly[key]={
+
+total:0,
+count:0
+
+};
+
+}
+
+monthly[key].total+=Number(fill);
+monthly[key].count++;
+
+});
+
+monthlyChart.data.labels=[];
+monthlyChart.data.datasets[0].data=[];
+
+Object.keys(monthly).sort().forEach(month=>{
+
+const avg=Math.round(
+monthly[month].total / monthly[month].count
+);
+
+monthlyChart.data.labels.push(month);
+monthlyChart.data.datasets[0].data.push(avg);
+
+});
+
+monthlyChart.update();
+
+}catch(err){
+
+console.error("Chart error:",err);
+
+}
+
 }
 
 loadMonthlyData();
