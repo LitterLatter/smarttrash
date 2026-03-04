@@ -169,7 +169,7 @@ button:disabled {
 
 <script>
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbyMEZk2GhQ7XlUmUKgUJxOa4c_0pb1aMRqZGVRDEvaeHHjyOuOKn1e_rvMuv8-ORuud/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbystO5DwnERdamOyAWAR4bv6cARE5TmqCZycyFOv1yMWNZomosFP_OJNHtcY_E1Ommn/exec";
 
 /* ===== CLOUDINARY SETTING ===== */
 const CLOUD_NAME = "df892oqys";
@@ -254,8 +254,6 @@ function submitComplaint() {
     formData.append("issueType", document.getElementById("issueType").value);
     formData.append("location", locationInput.value);
     formData.append("description", descInput.value);
-
-    // TAMBAHAN supaya Apps Script boleh baca gambar
     formData.append("imageUrl", imageUrl);
 
     fetch(scriptURL, {
