@@ -1,5 +1,5 @@
 // ================= CONFIG =================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzY5wyS0lLNcXr-aLzKLu3KiadN5pr2FFwQKNM9xki1vQ9rvceCNJCkZHVjWeF2O64P/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmbykmWuoLnwtSuqbSXHB3NhQ18JdtepgjEvyZtMCj5GlSOXx6wHYlbP6ZynndOCYx/exec";
 // ==========================================
 
 
