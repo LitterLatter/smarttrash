@@ -6,72 +6,106 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#f4f6f9;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
 }
 
-header{
-  background:#00695c;
-  color:white;
-  padding:20px;
+header {
+  background: #00695c;
+  color: white;
+  padding: 20px;
 }
 
-.container{
-  padding:25px;
+.container {
+  padding: 25px;
 }
 
-.card{
-  background:white;
-  padding:25px;
-  border-radius:12px;
-  box-shadow:0 2px 10px rgba(0,0,0,0.1);
-  max-width:600px;
-  margin:auto;
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  max-width: 600px;
+  margin: auto;
 }
 
-label{
-  font-weight:bold;
-  display:block;
-  margin-top:10px;
+label {
+  font-weight: bold;
+  display: block;
+  margin-top: 10px;
 }
 
-input,select,textarea{
-  width:100%;
-  padding:10px;
-  margin-top:6px;
-  margin-bottom:10px;
-  border-radius:6px;
-  border:1px solid #ccc;
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
-button{
-  background:#00695c;
-  color:white;
-  border:none;
-  padding:12px 20px;
-  border-radius:20px;
-  cursor:pointer;
-  opacity:.6;
+textarea {
+  resize: vertical;
 }
 
-button.active{
-  opacity:1;
+button {
+  background: #00695c;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  opacity: 0.6;
 }
 
-#preview{
-  display:none;
-  width:100%;
-  margin-top:10px;
-  border-radius:10px;
+button.active {
+  opacity: 1;
 }
 
-.success{
-  display:none;
-  margin-top:15px;
-  color:green;
-  font-weight:bold;
+button:disabled {
+  cursor: not-allowed;
+}
+
+#preview {
+  display: none;
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.success {
+  display: none;
+  margin-top: 15px;
+  color: green;
+  font-weight: bold;
+}
+
+.checklist {
+  margin-top: 15px;
+  font-size: 13px;
+  color: #555;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.box {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #999;
+  border-radius: 3px;
+  margin-right: 8px;
+}
+
+.box.checked {
+  background: #00695c;
+  border-color: #00695c;
 }
 </style>
 </head>
@@ -79,156 +113,172 @@ button.active{
 <body>
 
 <header>
-<h2>📝 Report a Problem</h2>
+  <h2>📝 Report a Problem</h2>
 </header>
 
 <div class="container">
+  <div class="card">
 
-<div class="card">
+    <label>Issue Type</label>
+    <select id="issueType">
+      <option>Sampah Bersepah</option>
+      <option>Tong Rosak</option>
+      <option>Tong Hilang</option>
+      <option>Bau Busuk</option>
+      <option>Lain-lain</option>
+    </select>
 
-<form id="reportForm">
+    <label>Location</label>
+    <input type="text" id="location">
 
-<label>Issue Type</label>
-<select id="issueType">
-<option>Sampah Bersepah</option>
-<option>Tong Rosak</option>
-<option>Tong Hilang</option>
-<option>Bau Busuk</option>
-<option>Lain-lain</option>
-</select>
+    <label>Description</label>
+    <textarea id="description" rows="4"></textarea>
 
-<label>Location</label>
-<input type="text" id="location">
+    <label>Upload Photo</label>
+    <input type="file" id="photo" accept="image/*">
 
-<label>Description</label>
-<textarea id="description"></textarea>
+    <img id="preview">
 
-<label>Upload Photo</label>
-<input type="file" id="photo" accept="image/*">
+    <div class="checklist">
+      <div class="check-item">
+        <div id="checkLocation" class="box"></div>
+        <span>Sila isi lokasi</span>
+      </div>
+      <div class="check-item">
+        <div id="checkDesc" class="box"></div>
+        <span>Sila isi masalah</span>
+      </div>
+      <div class="check-item">
+        <div id="checkPhoto" class="box"></div>
+        <span>Sila upload gambar bukti</span>
+      </div>
+    </div>
 
-<img id="preview">
+    <br>
 
-<br>
+    <button id="submitBtn" onclick="submitComplaint()" disabled>
+      Submit Report
+    </button>
 
-<button id="submitBtn" disabled>Submit Report</button>
+    <p class="success" id="successMsg">
+      ✅ Report berjaya dihantar!
+    </p>
 
-<p class="success" id="successMsg">
-✅ Report berjaya dihantar!
-</p>
-
-</form>
-
-</div>
+  </div>
 </div>
 
 <script>
 
-const SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbzmbykmWuoLnwtSuqbSXHB3NhQ18JdtepgjEvyZtMCj5GlSOXx6wHYlbP6ZynndOCYx/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbystO5DwnERdamOyAWAR4bv6cARE5TmqCZycyFOv1yMWNZomosFP_OJNHtcY_E1Ommn/exec";
 
-const form = document.getElementById("reportForm");
+/* ===== CLOUDINARY SETTING ===== */
+const CLOUD_NAME = "df892oqys";
+const UPLOAD_PRESET = "smarttrash_upload";
+
+function uploadToCloudinary(file){
+
+  const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+  const data = new FormData();
+  data.append("file", file);
+  data.append("upload_preset", UPLOAD_PRESET);
+
+  return fetch(url,{
+    method:"POST",
+    body:data
+  })
+  .then(res=>res.json())
+  .then(data=>data.secure_url);
+
+}
+/* ===== END CLOUDINARY ===== */
+
 const locationInput = document.getElementById("location");
 const descInput = document.getElementById("description");
 const photoInput = document.getElementById("photo");
 const submitBtn = document.getElementById("submitBtn");
 
-function validateForm(){
-
-let validLocation = locationInput.value.trim() !== "";
-let validDesc = descInput.value.trim() !== "";
-
-if(validLocation && validDesc){
-submitBtn.disabled = false;
-submitBtn.classList.add("active");
-}
-else{
-submitBtn.disabled = true;
-submitBtn.classList.remove("active");
+function toggleCheck(id, condition) {
+  const box = document.getElementById(id);
+  condition ? box.classList.add("checked") : box.classList.remove("checked");
 }
 
+function validateForm() {
+
+  let validLocation = locationInput.value.trim() !== "";
+  let validDesc = descInput.value.trim() !== "";
+  let validPhoto = photoInput.files.length > 0;
+
+  toggleCheck("checkLocation", validLocation);
+  toggleCheck("checkDesc", validDesc);
+  toggleCheck("checkPhoto", validPhoto);
+
+  if (validLocation && validDesc && validPhoto) {
+    submitBtn.disabled = false;
+    submitBtn.classList.add("active");
+  } else {
+    submitBtn.disabled = true;
+    submitBtn.classList.remove("active");
+  }
 }
 
-locationInput.addEventListener("input",validateForm);
-descInput.addEventListener("input",validateForm);
+locationInput.addEventListener("input", validateForm);
+descInput.addEventListener("input", validateForm);
 
-photoInput.addEventListener("change",function(){
+photoInput.addEventListener("change", function () {
 
-const file = this.files[0];
+  validateForm();
 
-if(!file) return;
+  const file = this.files[0];
+  if (!file) return;
 
-const reader = new FileReader();
-
-reader.onload=function(e){
-
-const img=document.getElementById("preview");
-img.src=e.target.result;
-img.style.display="block";
-
-};
-
-reader.readAsDataURL(file);
-
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const img = document.getElementById("preview");
+    img.src = e.target.result;
+    img.style.display = "block";
+  };
+  reader.readAsDataURL(file);
 });
 
-form.addEventListener("submit",function(e){
+function submitComplaint() {
 
-e.preventDefault();
+  if (submitBtn.disabled) return;
 
-const formData=new FormData();
+  const file = photoInput.files[0];
+  if (!file) return;
 
-formData.append("issueType",document.getElementById("issueType").value);
-formData.append("location",locationInput.value);
-formData.append("description",descInput.value);
+  uploadToCloudinary(file).then(imageUrl=>{
 
-const file=photoInput.files[0];
+    const formData = new FormData();
+    formData.append("issueType", document.getElementById("issueType").value);
+    formData.append("location", locationInput.value);
+    formData.append("description", descInput.value);
+    formData.append("imageUrl", imageUrl);
 
-function sendData(){
+    fetch(scriptURL, {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
 
-fetch(SCRIPT_URL,{
-method:"POST",
-body:formData
-})
-.then(res=>res.json())
-.then(data=>{
+      if (data.status === "success") {
+        document.getElementById("successMsg").style.display = "block";
+        setTimeout(() => location.reload(), 2000);
+      } else {
+        alert("Error: " + data.message);
+      }
 
-if(data.status==="success"){
-document.getElementById("successMsg").style.display="block";
-form.reset();
-}
-else{
-alert("Error: "+data.message);
-}
+    })
+    .catch(err => {
+      alert("Error menghantar report ❌");
+      console.log(err);
+    });
 
-})
-.catch(err=>{
-console.log(err);
-alert("Error menghantar report ❌");
-});
-
-}
-
-if(file){
-
-const reader=new FileReader();
-
-reader.onload=function(e){
-
-formData.append("photo",e.target.result);
-sendData();
-
-};
-
-reader.readAsDataURL(file);
+  });
 
 }
-else{
-
-sendData();
-
-}
-
-});
 
 </script>
 
