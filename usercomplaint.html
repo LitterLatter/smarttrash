@@ -169,9 +169,10 @@ button:disabled {
 
 <script>
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbystO5DwnERdamOyAWAR4bv6cARE5TmqCZycyFOv1yMWNZomosFP_OJNHtcY_E1Ommn/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbyCbhiJIZC0-mZYOAYGwA6mEmkIiE4U5FseCrhnpApIOEFwX_QZHkwKv5vFQ8KNH3I/exec";
 
-/* ===== CLOUDINARY SETTING ===== */
+/* ===== TAMBAHAN CLOUDINARY ===== */
+
 const CLOUD_NAME = "df892oqys";
 const UPLOAD_PRESET = "smarttrash_upload";
 
@@ -191,7 +192,9 @@ function uploadToCloudinary(file){
   .then(data=>data.secure_url);
 
 }
-/* ===== END CLOUDINARY ===== */
+
+/* ===== END TAMBAHAN ===== */
+
 
 const locationInput = document.getElementById("location");
 const descInput = document.getElementById("description");
@@ -241,6 +244,7 @@ photoInput.addEventListener("change", function () {
   reader.readAsDataURL(file);
 });
 
+
 function submitComplaint() {
 
   if (submitBtn.disabled) return;
@@ -248,12 +252,16 @@ function submitComplaint() {
   const file = photoInput.files[0];
   if (!file) return;
 
+  /* ===== TAMBAHAN CLOUDINARY UPLOAD ===== */
+
   uploadToCloudinary(file).then(imageUrl=>{
 
     const formData = new FormData();
     formData.append("issueType", document.getElementById("issueType").value);
     formData.append("location", locationInput.value);
     formData.append("description", descInput.value);
+
+    // TAMBAHAN
     formData.append("imageUrl", imageUrl);
 
     fetch(scriptURL, {
