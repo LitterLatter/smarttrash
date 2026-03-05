@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,304 +6,411 @@
 <title>SmartTrash – User Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Leaflet -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f6f9;
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
 }
 
-header {
-  background: #00695c;
-  color: white;
-  padding: 16px 20px;
+body{
+background:#f4f6f9;
 }
 
-header h2 {
-  margin: 0;
-  font-size: 20px;
+/* HEADER */
+
+header{
+background:linear-gradient(135deg,#00695c,#00a896);
+color:white;
+padding:18px 25px;
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
 
-header small {
-  opacity: 0.9;
-  font-size: 13px;
+header button{
+background:white;
+color:#00695c;
+border:none;
+padding:8px 16px;
+border-radius:20px;
+cursor:pointer;
+font-weight:600;
 }
 
-.top-buttons {
-  background: #e0f2f1;
-  padding: 12px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+/* TOP MENU */
+
+.top-buttons{
+background:white;
+padding:15px;
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+box-shadow:0 2px 10px rgba(0,0,0,0.05);
 }
 
-.top-buttons button {
-  background: #00695c;
-  color: white;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 14px;
+.top-buttons button{
+background:#00695c;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:25px;
+cursor:pointer;
+transition:.3s;
 }
 
-.container {
-  padding: 20px;
+.top-buttons button:hover{
+transform:scale(1.05);
 }
 
-.card {
-  background: white;
-  padding: 18px;
-  border-radius: 12px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
+/* CONTAINER */
+
+.container{
+padding:25px;
+max-width:1100px;
+margin:auto;
 }
 
-.status-green {
-  color: green;
-  font-weight: bold;
+/* CARD */
+
+.card{
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+margin-bottom:25px;
 }
 
-#map {
-  height: 260px;
-  border-radius: 10px;
+/* PROGRESS BAR */
+
+.progress{
+background:#eee;
+border-radius:20px;
+overflow:hidden;
+height:18px;
+margin-top:8px;
+}
+
+.progress-bar{
+height:100%;
+background:#00a896;
+width:0%;
+transition:.5s;
+}
+
+/* STATUS COLORS */
+
+.status-normal{
+color:green;
+font-weight:600;
+}
+
+.status-half{
+color:orange;
+font-weight:600;
+}
+
+.status-warning{
+color:orange;
+font-weight:600;
+}
+
+.status-full{
+color:red;
+font-weight:600;
+}
+
+/* MAP */
+
+#map{
+height:260px;
+border-radius:12px;
 }
 
 /* CHATBOT */
-#chatbot {
-  position: fixed;
-  bottom: 90px;
-  right: 20px;
-  width: 340px;
-  height: 480px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-  display: none;
-  flex-direction: column;
-  z-index: 9999;
-  overflow: hidden;
+
+#chatbot{
+position:fixed;
+bottom:90px;
+right:20px;
+width:340px;
+height:460px;
+background:white;
+border-radius:16px;
+box-shadow:0 8px 30px rgba(0,0,0,0.3);
+display:none;
+flex-direction:column;
+overflow:hidden;
 }
 
-#chatbot-header {
-  background: #00695c;
-  color: white;
-  padding: 14px;
-  text-align: center;
-  font-weight: bold;
+#chatbot-header{
+background:#00695c;
+color:white;
+padding:14px;
+text-align:center;
 }
 
-#chatbot-body {
-  flex: 1;
-  padding: 14px;
-  overflow-y: auto;
-  background: #f9f9f9;
-  font-size: 15px;
+#chatbot-body{
+flex:1;
+padding:14px;
+overflow-y:auto;
+background:#f9f9f9;
 }
 
-.user {
-  color: #00695c;
-  font-weight: bold;
+#chatbot-input{
+display:flex;
+border-top:1px solid #ddd;
 }
 
-.bot {
-  color: #333;
+#chatbot-input input{
+flex:1;
+padding:10px;
+border:none;
+outline:none;
 }
 
-#chatbot-input {
-  display: flex;
-  border-top: 1px solid #ddd;
+#chatbot-input button{
+background:#00695c;
+color:white;
+border:none;
+padding:0 18px;
 }
 
-#chatbot-input input {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  font-size: 15px;
-  outline: none;
+#chatbot-toggle{
+position:fixed;
+bottom:20px;
+right:20px;
+width:60px;
+height:60px;
+background:#00695c;
+color:white;
+border-radius:50%;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:26px;
+cursor:pointer;
 }
 
-#chatbot-input button {
-  background: #00695c;
-  color: white;
-  border: none;
-  padding: 0 18px;
-}
-
-#chatbot-toggle {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  background: #00695c;
-  color: white;
-  border-radius: 50%;
-  font-size: 26px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h2>SmartTrash – User Dashboard ♻️</h2>
-  <small>Tong pun ada dashboard, manusia jangan cemburu 😜</small>
+
+<h2>SmartTrash – User Dashboard ♻️</h2>
+
+<button onclick="window.location.href='index.html'">
+⬅ Back
+</button>
+
 </header>
 
+
 <div class="top-buttons">
-  <button onclick="scrollToSection('status')">📊 Status Tong</button>
-  <button onclick="scrollToSection('location')">📍 Location</button>
-  <button onclick="toggleChatbot()">🤖 Chatbot</button>
-  <button onclick="location.href='usercomplaint.html'">📝 Report Problem</button>
+
+<button onclick="scrollToSection('status')">📊 Status Tong</button>
+<button onclick="scrollToSection('location')">📍 Location</button>
+<button onclick="toggleChatbot()">🤖 Chatbot</button>
+<button onclick="location.href='usercomplaint.html'">📝 Report Problem</button>
+<button onclick="location.href='myreports.html'">📄 My Reports</button>
+
 </div>
+
 
 <div class="container">
 
-  <div class="card" id="status">
-    <h3>Status Tong Sampah</h3>
-    <p><strong>Lokasi:</strong> Terengganu</p>
-    <p><strong>Isi:</strong> <span id="fillPercent">Loading...</span>%</p>
-    <p class="status-green">
-      Status: <span id="binStatus">Loading...</span>
-    </p>
-  </div>
+<div class="card" id="status">
 
-  <div class="card" id="location">
-    <h3>Lokasi Tong Pintar</h3>
-    <div id="map"></div>
-  </div>
+<h3>Status Tong Sampah</h3>
+
+<p><strong>Lokasi:</strong> Terengganu</p>
+
+<p><strong>Isi Tong:</strong> <span id="fillPercent">Loading...</span>%</p>
+
+<div class="progress">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+
+<p>Status: <span id="binStatus">Loading...</span></p>
 
 </div>
 
-<!-- CHATBOT -->
+
+<div class="card" id="location">
+
+<h3>Lokasi Tong Pintar</h3>
+
+<div id="map"></div>
+
+</div>
+
+</div>
+
+
 <div id="chatbot">
-  <div id="chatbot-header">SmartTrash Bot 🤖</div>
-  <div id="chatbot-body">
-    <p class="bot">Hai! Anda boleh tanya apa-apa tentang tong ini 😄</p>
-  </div>
-  <div id="chatbot-input">
-    <input type="text" id="userInput" placeholder="Tanya apa-apa..." />
-    <button onclick="sendMessage()">Send</button>
-  </div>
+
+<div id="chatbot-header">SmartTrash Bot 🤖</div>
+
+<div id="chatbot-body">
+<p>Hai! Tanya saya tentang status tong 😄</p>
 </div>
+
+<div id="chatbot-input">
+<input type="text" id="userInput" placeholder="Tanya apa-apa..." />
+<button onclick="sendMessage()">Send</button>
+</div>
+
+</div>
+
 
 <div id="chatbot-toggle" onclick="toggleChatbot()">💬</div>
 
+
 <script>
-// MAP
-const map = L.map("map").setView([5.3302, 103.1408], 13);
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "© OpenStreetMap"
-}).addTo(map);
-L.marker([5.3302, 103.1408]).addTo(map);
 
-// LIVE DATA
-const scriptURL = "https://script.google.com/macros/s/AKfycbxaLynWL1g4-iEV56DsfMSrrgKwvjIf9EmZI3L79QUXTTkU7Br6u5ptlPRc9fIeg4x3/exec";
+/* MAP */
 
-async function loadBinData() {
-  try {
-    const response = await fetch(scriptURL);
-    const data = await response.json();
+const map = L.map("map").setView([5.3302,103.1408],13);
 
-    let fill = parseInt(data.fill);
-    document.getElementById("fillPercent").innerText = fill;
+L.tileLayer(
+"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+{ attribution:"© OpenStreetMap" }
+).addTo(map);
 
-    let statusText = "";
-    let color = "";
+L.marker([5.3302,103.1408]).addTo(map);
 
-    if (fill >= 100) {
-      statusText = "PENUH 100% 🚨";
-      color = "red";
-    } else if (fill >= 80) {
-      statusText = "HAMPIR PENUH ⚠️";
-      color = "orange";
-    } else if (fill >= 50) {
-      statusText = "SEPARUH 🟡";
-      color = "orange";
-    } else {
-      statusText = "NORMAL 🟢";
-      color = "green";
-    }
 
-    const statusEl = document.getElementById("binStatus");
-    statusEl.innerText = statusText;
-    statusEl.style.color = color;
-    statusEl.style.fontWeight = "bold";
+/* API */
 
-  } catch (error) {
-    console.log("Error ambil data:", error);
-  }
+const scriptURL =
+"https://script.google.com/macros/s/AKfycbw-XWVDzqI2OB-xyuSwnrhkNpRrQE2w4RgyCbwv4KhaPzj9F6209lgMUd3_jO-wVxN_/exec";
+
+
+async function loadBinData(){
+
+try{
+
+const res = await fetch(scriptURL);
+const data = await res.json();
+
+if(!data || data.length===0) return;
+
+const last=data[data.length-1];
+
+const fill=parseInt(last.Fill);
+
+document.getElementById("fillPercent").innerText=fill;
+
+document.getElementById("progressBar").style.width=fill+"%";
+
+let status="";
+let className="";
+
+if(fill>=100){
+status="🚨 PENUH";
+className="status-full";
+}
+else if(fill>=80){
+status="⚠️ HAMPIR PENUH";
+className="status-warning";
+}
+else if(fill>=50){
+status="🟡 SEPARUH";
+className="status-half";
+}
+else{
+status="🟢 NORMAL";
+className="status-normal";
+}
+
+const statusEl=document.getElementById("binStatus");
+
+statusEl.innerText=status;
+statusEl.className=className;
+
+}
+catch(err){
+
+console.log("API error:",err);
+
+}
+
 }
 
 loadBinData();
-setInterval(loadBinData, 10000);
 
-// CHATBOT
-function toggleChatbot() {
-  const bot = document.getElementById("chatbot");
-  bot.style.display = bot.style.display === "flex" ? "none" : "flex";
+setInterval(loadBinData,10000);
+
+
+/* CHATBOT */
+
+function toggleChatbot(){
+
+const bot=document.getElementById("chatbot");
+
+bot.style.display=
+bot.style.display==="flex"
+? "none"
+: "flex";
+
 }
 
-function sendMessage() {
-  const input = document.getElementById("userInput");
-  const msg = input.value.trim().toLowerCase();
-  if (!msg) return;
+function sendMessage(){
 
-  const body = document.getElementById("chatbot-body");
-  body.innerHTML += `<p class="user">👤 ${msg}</p>`;
+const input=document.getElementById("userInput");
+const msg=input.value.trim().toLowerCase();
 
-  let fill = parseInt(document.getElementById("fillPercent").innerText);
-  let status = document.getElementById("binStatus").innerText;
+if(!msg) return;
 
-  let reply = "🤖 Maaf, saya belum faham soalan tu 😅";
+const body=document.getElementById("chatbot-body");
 
-  if (fill >= 100) {
-    reply = "🚨 Tong dah penuh 100%! Sila kosongkan segera!";
-  }
-  else if (msg.includes("status")) {
-    reply = `📊 Status semasa: ${status} (${fill}%).`;
-  }
-  else if (msg.includes("berapa") || msg.includes("isi")) {
-    reply = `📦 Isi tong sekarang ${fill}%.`;
-  }
-  else if (msg.includes("penuh") || msg.includes("hampir")) {
-    reply = fill >= 80 ? "⚠️ Tong hampir penuh!" : "✅ Tong belum penuh.";
-  }
-  else if (msg.includes("lokasi")) {
-    reply = "📍 Tong berada di Terengganu, Malaysia.";
-  }
-  else if (msg.includes("bila")) {
-    reply = "⏳ Data dikemaskini setiap 10 saat.";
-  }
-  else if (msg.includes("kosong")) {
-    reply = "🗑️ Tong akan dikosongkan oleh pihak pengurusan.";
-  }
-  else if (msg.includes("hai") || msg.includes("hello") || msg.includes("hi")) {
-    reply = "👋 Hai! Nak tahu status tong?";
-  }
+body.innerHTML+=`<p><b>👤:</b> ${msg}</p>`;
 
-  setTimeout(() => {
-    body.innerHTML += `<p class="bot">${reply}</p>`;
-    body.scrollTop = body.scrollHeight;
-  }, 500);
+let fill=parseInt(document.getElementById("fillPercent").innerText);
 
-  input.value = "";
+let reply="Maaf saya tak faham 😅";
+
+if(msg.includes("status")){
+reply=`Status tong sekarang ${fill}%`;
+}
+else if(msg.includes("isi")){
+reply=`Isi tong sekarang ${fill}%`;
+}
+else if(msg.includes("lokasi")){
+reply="Tong berada di Terengganu.";
 }
 
-function scrollToSection(id) {
-  document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+setTimeout(()=>{
+
+body.innerHTML+=`<p><b>🤖:</b> ${reply}</p>`;
+body.scrollTop=body.scrollHeight;
+
+},400);
+
+input.value="";
+
 }
+
+
+function scrollToSection(id){
+
+document.getElementById(id).scrollIntoView({
+behavior:"smooth"
+});
+
+}
+
 </script>
 
 </body>
 </html>
+```
