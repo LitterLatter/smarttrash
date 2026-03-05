@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SmartTrash – My Reports</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f4f6f9;
+}
+
+/* HEADER */
+
+header{
+background:linear-gradient(135deg,#00695c,#00a896);
+color:white;
+padding:18px 25px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+header h2{
+font-size:20px;
+}
+
+/* BACK BUTTON */
+
+.back-btn{
+text-decoration:none;
+background:white;
+color:#00695c;
+padding:8px 16px;
+border-radius:20px;
+font-weight:600;
+transition:0.2s;
+}
+
+.back-btn:hover{
+background:#e0f2f1;
+}
+
+/* CONTAINER */
+
+.container{
+padding:30px;
+max-width:1100px;
+margin:auto;
+}
+
+/* CARD */
+
+.card{
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #eee;
+text-align:left;
+font-size:14px;
+}
+
+th{
+background:#f1f5f4;
+}
+
+tr:hover{
+background:#fafafa;
+}
+
+/* IMAGE */
+
+img{
+width:70px;
+border-radius:8px;
+}
+
+/* STATUS BADGE */
+
+.status{
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:600;
+}
+
+.pending{
+background:#fff3cd;
+color:#856404;
+}
+
+.progress{
+background:#cce5ff;
+color:#004085;
+}
+
+.done{
+background:#d4edda;
+color:#155724;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<h2>📄 My Submitted Reports</h2>
+
+<a href="User-DashBoard.html" class="back-btn">
+⬅ Back Dashboard
+</a>
+
+</header>
+
+
+<div class="container">
+
+<div class="card">
+
+<h3>Status of Your Reports</h3>
+
+<table>
+
+<thead>
+<tr>
+<th>No</th>
+<th>Issue</th>
+<th>Location</th>
+<th>Description</th>
+<th>Date</th>
+<th>Image</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody id="reportTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<script>
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyCbhiJIZC0-mZYOAYGwA6mEmkIiE4U5FseCrhnpApIOEFwX_QZHkwKv5vFQ8KNH3I/exec";
+
+
+async function loadReports(){
+
+try{
+
+const res = await fetch(API_URL);
+
+const result = await res.json();
+
+const rows = result.data;
+
+const table = document.getElementById("reportTable");
+
+table.innerHTML="";
+
+rows.reverse().forEach((row,index)=>{
+
+const time = row.Time;
+const issue = row.Issue;
+const location = row.Location;
+const description = row.Description;
+const image = row.imageUrl;
+const status = row.Status || "Pending";
+
+const date = new Date(time).toLocaleDateString();
+
+table.innerHTML += `
+
+<tr>
+
+<td>${index+1}</td>
+
+<td>${issue}</td>
+
+<td>${location}</td>
+
+<td>${description}</td>
+
+<td>${date}</td>
+
+<td>
+${image ? `<a href="${image}" target="_blank">
+<img src="${image}">
+</a>` : "-"}
+</td>
+
+<td>
+
+<span class="status ${status.toLowerCase()}">
+
+${status}
+
+</span>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+}
+catch(error){
+
+console.log("Error load reports:",error);
+
+}
+
+}
+
+loadReports();
+
+</script>
+
+</body>
+</html>
