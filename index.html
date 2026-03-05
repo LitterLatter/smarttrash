@@ -1,81 +1,265 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>SmartTrash IoT</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>SmartTrash IoT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: linear-gradient(135deg, #00695c, #26a69a);
-      color: white;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-    .container {
-      max-width: 600px;
-      padding: 40px;
-      background: rgba(0,0,0,0.25);
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
+<style>
 
-    h1 {
-      font-size: 42px;
-      margin-bottom: 10px;
-    }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
 
-    p {
-      font-size: 18px;
-      margin-bottom: 30px;
-    }
+body{
+background:#f4f6f8;
+}
 
-    .btn {
-      display: inline-block;
-      margin: 10px;
-      padding: 14px 28px;
-      font-size: 16px;
-      font-weight: bold;
-      color: #00695c;
-      background: white;
-      border-radius: 30px;
-      text-decoration: none;
-      transition: 0.3s;
-    }
+/* NAVBAR */
 
-    .btn:hover {
-      transform: scale(1.05);
-      background: #e0f2f1;
-    }
+nav{
+background:white;
+padding:15px 60px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 3px 10px rgba(0,0,0,0.05);
+}
 
-    footer {
-      margin-top: 30px;
-      font-size: 14px;
-      opacity: 0.8;
-    }
-  </style>
+nav h2{
+color:#00695c;
+}
+
+nav a{
+text-decoration:none;
+margin-left:20px;
+color:#444;
+font-weight:500;
+}
+
+nav a:hover{
+color:#00695c;
+}
+
+/* HERO */
+
+header{
+background:linear-gradient(135deg,#00695c,#00a896);
+color:white;
+padding:80px 20px;
+text-align:center;
+}
+
+header h1{
+font-size:40px;
+margin-bottom:10px;
+}
+
+header p{
+font-size:16px;
+opacity:.9;
+}
+
+/* CONTAINER */
+
+.container{
+max-width:1100px;
+margin:60px auto;
+padding:20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:30px;
+}
+
+/* CARD */
+
+.card{
+background:white;
+padding:35px;
+border-radius:18px;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+text-align:center;
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-8px);
+box-shadow:0 15px 30px rgba(0,0,0,0.12);
+}
+
+.card h2{
+color:#00695c;
+margin-bottom:15px;
+}
+
+.card p{
+color:#555;
+font-size:14px;
+line-height:1.6;
+margin-bottom:25px;
+}
+
+/* BUTTON */
+
+.btn{
+display:inline-block;
+padding:12px 28px;
+background:linear-gradient(135deg,#00695c,#00a896);
+color:white;
+text-decoration:none;
+border-radius:30px;
+font-weight:600;
+transition:.3s;
+}
+
+.btn:hover{
+transform:scale(1.05);
+}
+
+/* FEATURES */
+
+.features{
+background:white;
+padding:60px 20px;
+text-align:center;
+}
+
+.features h2{
+margin-bottom:40px;
+color:#00695c;
+}
+
+.feature-grid{
+max-width:1000px;
+margin:auto;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:25px;
+}
+
+.feature{
+padding:25px;
+background:#f7f9fb;
+border-radius:12px;
+}
+
+/* FOOTER */
+
+footer{
+text-align:center;
+padding:20px;
+color:#777;
+font-size:13px;
+margin-top:40px;
+}
+
+</style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>SmartTrash IoT</h1>
-    <p>
-      Smart Waste Management System using IoT & Web Dashboard<br>
-      Real-time monitoring • Data visualization • Smart scheduling
-    </p>
 
-    <a class="btn" href="User-DashBoard.html">Public Dashboard</a>
-    <a class="btn" href="Login.html">Admin Login</a>
+<!-- NAVBAR -->
 
-    <footer>
-      © 2025 SmartTrash | Final Year Project
-    </footer>
-  </div>
+<nav>
+
+<h2>SmartTrash</h2>
+
+<div>
+<a href="#">Home</a>
+<a href="#">About</a>
+<a href="#">Contact</a>
+</div>
+
+</nav>
+
+
+<!-- HERO -->
+
+<header>
+
+<h1>SmartTrash IoT</h1>
+
+<p>Smart Waste Management & Real-Time Monitoring System</p>
+
+</header>
+
+
+<!-- MAIN CARDS -->
+
+<div class="container">
+
+<div class="card">
+
+<h2>Public Dashboard</h2>
+
+<p>
+View real-time waste bin status and availability.
+<br><br>
+<small>📱 Access via QR Code on the bin</small>
+</p>
+
+<a href="User-DashBoard.html" class="btn">View Dashboard</a>
+
+</div>
+
+
+<div class="card">
+
+<h2>Admin Access</h2>
+
+<p>
+Secure access for authorities to monitor,
+analyze data, and manage waste collection.
+</p>
+
+<a href="login.html" class="btn">Admin Login</a>
+
+</div>
+
+</div>
+
+
+<!-- FEATURES -->
+
+<section class="features">
+
+<h2>System Features</h2>
+
+<div class="feature-grid">
+
+<div class="feature">
+<h3>📡 Real-Time Monitoring</h3>
+<p>Monitor waste bin status using IoT sensors.</p>
+</div>
+
+<div class="feature">
+<h3>📍 Smart Location</h3>
+<p>Locate nearby waste bins easily.</p>
+</div>
+
+<div class="feature">
+<h3>📊 Data Analysis</h3>
+<p>Analyze waste collection data efficiently.</p>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+© 2025 SmartTrash IoT | Diploma in IT Project
+
+</footer>
+
+
 </body>
 </html>
