@@ -15,7 +15,6 @@ font-family:Arial;
 background:#f4f6f9;
 }
 
-/* HEADER */
 header{
 background:#00695c;
 color:white;
@@ -34,12 +33,10 @@ border-radius:5px;
 cursor:pointer;
 }
 
-/* CONTAINER */
 .container{
 padding:25px;
 }
 
-/* CARD */
 .card{
 background:white;
 padding:20px;
@@ -48,7 +45,6 @@ box-shadow:0 2px 10px rgba(0,0,0,0.1);
 margin-bottom:25px;
 }
 
-/* TABLE */
 table{
 width:100%;
 border-collapse:collapse;
@@ -70,7 +66,6 @@ width:70px;
 border-radius:6px;
 }
 
-/* STATUS */
 .status{
 padding:6px 12px;
 border-radius:12px;
@@ -115,10 +110,7 @@ max-width:100%;
 
 </header>
 
-
 <div class="container">
-
-<!-- ================= COMPLAINT TABLE ================= -->
 
 <div class="card">
 
@@ -145,8 +137,6 @@ max-width:100%;
 </div>
 
 
-<!-- ================= GRAPH ================= -->
-
 <div class="card">
 
 <h3>Monthly Average Fill Level (%)</h3>
@@ -160,36 +150,29 @@ max-width:100%;
 
 <script>
 
-// ================= API =================
-
 const API_URL =
 "https://script.google.com/macros/s/AKfycbyCbhiJIZC0-mZYOAYGwA6mEmkIiE4U5FseCrhnpApIOEFwX_QZHkwKv5vFQ8KNH3I/exec";
 
 
-
-// ================= LOAD COMPLAINTS =================
 
 async function loadComplaints(){
 
 try{
 
 const res = await fetch(API_URL);
-
 const result = await res.json();
-
-const rows = result.data || result;
+const rows = result.data;
 
 const table = document.getElementById("complaintTable");
-
 table.innerHTML="";
 
-rows.slice(1).reverse().forEach((row,index)=>{
+rows.reverse().forEach((row,index)=>{
 
-const time=row[0];
-const issue=row[1];
-const location=row[2];
-const description=row[3];
-const image=row[4];
+const time = row.Time;
+const issue = row.Issue;
+const location = row.Location;
+const description = row.Description;
+const image = row.imageUrl;
 
 const date=new Date(time).toLocaleDateString();
 
@@ -218,9 +201,7 @@ ${image ? `<a href="${image}" target="_blank">
 <select class="status pending" onchange="changeStatus(this)">
 
 <option value="pending">Pending</option>
-
 <option value="progress">In Progress</option>
-
 <option value="done">Resolved</option>
 
 </select>
@@ -250,12 +231,9 @@ select.className="status "+select.value;
 
 loadComplaints();
 
-// AUTO REFRESH
 setInterval(loadComplaints,10000);
 
 
-
-// ================= CHART =================
 
 const ctx=document.getElementById("monthlyChart");
 
@@ -266,13 +244,9 @@ type:"bar",
 data:{
 labels:[],
 datasets:[{
-
 label:"Average Fill (%)",
-
 data:[],
-
 backgroundColor:"#00695c"
-
 }]
 },
 
@@ -288,23 +262,20 @@ max:100
 });
 
 
-
 async function loadMonthlyData(){
 
 try{
 
 const res=await fetch(API_URL);
-
 const result=await res.json();
-
-const rows=result.data || result;
+const rows=result.data;
 
 const monthly={};
 
-rows.slice(1).forEach(row=>{
+rows.forEach(row=>{
 
-const time=row[0];
-const fill=row[1];
+const time=row.Time;
+const fill=row.Fill;
 
 if(!time || !fill) return;
 
@@ -316,12 +287,7 @@ String(date.getMonth()+1).padStart(2,"0");
 
 if(!monthly[key]){
 
-monthly[key]={
-
-total:0,
-count:0
-
-};
+monthly[key]={total:0,count:0};
 
 }
 
@@ -335,9 +301,7 @@ monthlyChart.data.datasets[0].data=[];
 
 Object.keys(monthly).sort().forEach(month=>{
 
-const avg=Math.round(
-monthly[month].total / monthly[month].count
-);
+const avg=Math.round(monthly[month].total / monthly[month].count);
 
 monthlyChart.data.labels.push(month);
 monthlyChart.data.datasets[0].data.push(avg);
