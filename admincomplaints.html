@@ -7,16 +7,25 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
 
-body{
+*{
 margin:0;
-font-family:Arial;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
 background:#f4f6f9;
 }
 
+/* HEADER */
+
 header{
-background:#00695c;
+background:linear-gradient(135deg,#00695c,#00a896);
 color:white;
 padding:18px 30px;
 display:flex;
@@ -25,25 +34,34 @@ align-items:center;
 }
 
 header button{
-background:#004d40;
+background:white;
+color:#00695c;
 border:none;
-color:white;
 padding:8px 16px;
-border-radius:5px;
+border-radius:20px;
 cursor:pointer;
+font-weight:600;
 }
 
+/* CONTAINER */
+
 .container{
-padding:25px;
+padding:30px;
+max-width:1200px;
+margin:auto;
 }
+
+/* CARD */
 
 .card{
 background:white;
-padding:20px;
-border-radius:12px;
-box-shadow:0 2px 10px rgba(0,0,0,0.1);
-margin-bottom:25px;
+padding:25px;
+border-radius:15px;
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+margin-bottom:30px;
 }
+
+/* TABLE */
 
 table{
 width:100%;
@@ -53,24 +71,34 @@ margin-top:15px;
 
 th,td{
 padding:12px;
-border-bottom:1px solid #ddd;
+border-bottom:1px solid #eee;
 text-align:left;
+font-size:14px;
 }
 
 th{
-background:#e0f2f1;
+background:#f1f5f4;
 }
+
+tr:hover{
+background:#fafafa;
+}
+
+/* IMAGE */
 
 img{
 width:70px;
-border-radius:6px;
+border-radius:8px;
 }
+
+/* STATUS */
 
 .status{
 padding:6px 12px;
-border-radius:12px;
-font-size:13px;
-font-weight:bold;
+border-radius:15px;
+font-size:12px;
+font-weight:600;
+border:none;
 }
 
 .pending{
@@ -88,12 +116,10 @@ background:#d4edda;
 color:#155724;
 }
 
-select{
-padding:5px;
-}
+/* CHART */
 
 canvas{
-max-width:100%;
+margin-top:20px;
 }
 
 </style>
@@ -102,10 +128,11 @@ max-width:100%;
 <body>
 
 <header>
-<h2>📋 Admin Complaints & Monthly Report</h2>
+
+<h2>📋 SmartTrash Complaints Dashboard</h2>
 
 <button onclick="window.location.href='Admin-DashBoard.html'">
-⬅ Back
+⬅ Dashboard
 </button>
 
 </header>
@@ -152,7 +179,6 @@ max-width:100%;
 
 const API_URL =
 "https://script.google.com/macros/s/AKfycbyCbhiJIZC0-mZYOAYGwA6mEmkIiE4U5FseCrhnpApIOEFwX_QZHkwKv5vFQ8KNH3I/exec";
-
 
 
 async function loadComplaints(){
