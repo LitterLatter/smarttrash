@@ -195,9 +195,27 @@ const issue = row.Issue;
 const location = row.Location;
 const description = row.Description;
 const image = row.imageUrl;
-const status = row.Status || "Pending";
+let status = row.Status || "Pending";
 
 const date = new Date(time).toLocaleDateString();
+
+let statusClass="pending";
+let statusText="⏳ Pending (Waiting for admin)";
+
+if(status === "Pending"){
+statusClass="pending";
+statusText="⏳ Pending (Waiting for admin)";
+}
+
+else if(status === "In Progress"){
+statusClass="progress";
+statusText="👀 Viewed by Admin";
+}
+
+else if(status === "Resolved"){
+statusClass="done";
+statusText="✅ Resolved";
+}
 
 table.innerHTML += `
 
@@ -220,13 +238,9 @@ ${image ? `<a href="${image}" target="_blank">
 </td>
 
 <td>
-
-<span class="status ${status.toLowerCase()}">
-
-${status}
-
+<span class="status ${statusClass}">
+${statusText}
 </span>
-
 </td>
 
 </tr>
@@ -245,6 +259,10 @@ console.log("Error load reports:",error);
 }
 
 loadReports();
+
+/* AUTO REFRESH SETIAP 5 SAAT */
+
+setInterval(loadReports,5000);
 
 </script>
 
